@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="smart-rows">
+    {% if recommended_items %}
+    <div class="recommendation-row">
+        <h3>Recommended For You</h3>
+        <div class="menu-grid">
+            {% for item in recommended_items %}
+                {% include 'menu/menu_card.html' with item=item %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if popular_items %}
+    <div class="recommendation-row">
+        <h3>Popular Right Now</h3>
+        <div class="menu-grid">
+            {% for item in popular_items %}
+                {% include 'menu/menu_card.html' with item=item %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="menu-container">
+    <h1>Our Menu</h1>
+
+    <div class="filter-bar">
+        <a href="{% url 'menu_home' %}" class="filter-btn {% if not current_tag %}active{% endif %}">All</a>
+        {% for tag in all_tags %}
+            <a href="?tag={{ tag }}" class="filter-btn {% if current_tag == tag %}active{% endif %}">{{ tag|title }}</a>
+        {% endfor %}
+    </div>
+
+    {% for category, items_in_category in items_by_category.items %}
+        <div class="category-section">
+            <h2>{{ category.name }}</h2>
+            <div class="menu-grid">
+                {% for item in items_in_category %}
+                    {% include 'menu/menu_card.html' with item=item %}
+                {% endfor %}
+            </div>
+        </div>
+    {% empty %}
+        <p>No menu items found matching your filter.</p>
+    {% endfor %}
+</div>
+{% endblock %}

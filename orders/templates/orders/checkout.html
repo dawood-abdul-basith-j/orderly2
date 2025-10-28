@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="content-container">
+    <h2>Checkout</h2>
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %} <li class="{{ message.tags }}">{{ message }}</li> {% endfor %}
+        </ul>
+    {% endif %}
+
+    {# --- MAIN FORM WRAPS EVERYTHING --- #}
+    <form method="POST">
+        {% csrf_token %}
+        <div class="checkout-layout">
+
+            {# --- Order Summary Column --- #}
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <table class="cart-table">
+                     <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                {{ item.menu_item.name }} (x{{ item.quantity }})
+                                {% if item.selected_options %} <br><small><em>({{ item.selected_options }})</em></small>{% endif %}
+                                {% if item.special_request %} <br><small><em>Req: {{ item.special_request }}</em></small>{% endif %}
+                            </td>
+                            <td>₹{{ item.subtotal|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td><strong>Total Amount</strong></td>
+                            <td><strong>₹{{ cart.total_amount|floatformat:2 }}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {# --- Address and Payment Column --- #}
+            <div class="checkout-details">
+                {# --- DELIVERY ADDRESS SECTION --- #}
+                <div class="delivery-address-section">
+                    <h3>Delivery Address</h3>
+                    <label for="id_delivery_address">Enter Address:</label>
+                    <textarea name="delivery_address" id="id_delivery_address" class="special-request-box" required rows="4">{{ current_address|default:'' }}</textarea>
+                    {# Optionally add link to profile/settings to save address #}
+                    {# <small><a href="{% url 'settings' %}">Save this address to profile?</a></small> #}
+                </div>
+                {# --- END DELIVERY ADDRESS SECTION --- #}
+
+                {# --- PAYMENT SELECTION SECTION --- #}
+                <div class="payment-selection">
+                    <h3>Select Payment Method</h3>
+                    <div class="payment-option">
+                        <input type="radio" id="cash" name="payment_method" value="Cash" checked>
+                        <label for="cash">Cash on Delivery</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="online_payment" name="payment_method" value="Online">
+                        <label for="online_payment">Online Payment</label>
+                    </div>
+                </div>
+                {# --- END PAYMENT SELECTION --- #}
+
+                 {# --- SUBMIT BUTTON --- #}
+                 <button type="submit" class="checkout-btn" style="width: 100%; margin-top: 1.5rem;">Proceed to Payment</button>
+            </div>{# --- End Address and Payment Column --- #}
+
+        </div> {# --- End checkout-layout --- #}
+    </form> {# --- END MAIN FORM --- #}
+</div>
+{% endblock %}

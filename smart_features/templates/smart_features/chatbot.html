@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-container chatbot-container">
+    <h2>AI Assistant</h2>
+    <div id="chatbox" class="chatbox">
+        <div class="message bot-message">Hello! I'm Orderly's AI assistant. Ask me about the menu or your orders!</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Type your message..." class="chat-input" aria-label="Chat message input">
+        <button id="sendButton" class="chat-send-btn" aria-label="Send message">Send</button>
+    </div>
+</div>
+
+<script>
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    // Get URL and CSRF token safely from Django template tags
+    const chatbotApiUrl = "{% url 'chatbot_api' %}";
+    const csrfToken = "{{ csrf_token }}"; // Get CSRF token for secure POST
+
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+        // Sanitize text before adding to prevent XSS (basic example)
+        messageDiv.textContent = text;
+        chatbox.appendChild(messageDiv);
+        chatbox.scrollTop = chatbox.scrollHeight; // Scroll to bottom
+    }
+
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (!messageText) return;
+
+        addMessage(messageText, 'user');
+        userInput.value = ''; // Clear input
+        userInput.disabled = true; // Disable input while waiting
+        sendButton.disabled = true; // Disable button while waiting
+        addMessage('Thinking...', 'bot typing'); // Optional typing indicator
+
+        try {
+            const response = await fetch(chatbotApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken // Include CSRF token
+                },
+                body: JSON.stringify({ message: messageText })
+            });
+
+            // Remove typing indicator
+            const typingIndicator = chatbox.querySelector('.typing');
+            if(typingIndicator) typingIndicator.remove();
+
+            if (!response.ok) {
+                let errorMsg = `Error: ${response.statusText}`;
+                try {
+                     const errorData = await response.json();
+                     errorMsg = `Error: ${errorData.reply || response.statusText}`;
+                } catch(e) { /* Ignore if response is not JSON */ }
+                addMessage(errorMsg, 'bot');
+                return; // Stop processing on error
+            }
+
+            const data = await response.json();
+            addMessage(data.reply, 'bot');
+
+        } catch (error) {
+             // Remove typing indicator in case of fetch error
+            const typingIndicator = chatbox.querySelector('.typing');
+            if(typingIndicator) typingIndicator.remove();
+
+            console.error("Chatbot fetch error:", error);
+            addMessage('Sorry, I couldn\'t connect to the assistant right now.', 'bot');
+        } finally {
+             userInput.disabled = false; // Re-enable input
+             sendButton.disabled = false; // Re-enable button
+             userInput.focus(); // Focus back on input
+        }
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+            e.preventDefault(); // Prevent default Enter key behavior (like form submission)
+        }
+    });
+
+</script>
+{% endblock %}

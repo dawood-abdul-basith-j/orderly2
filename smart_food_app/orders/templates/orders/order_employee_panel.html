@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="panel-container">
+    <h2>Restaurant Order Panel</h2>
+    
+    {% if active_orders %}
+        <div class="order-list">
+            {% for order in active_orders %}
+            <div class="order-card-panel">
+                <div class="order-panel-header">
+                    <p><strong>Time:</strong> {{ order.order_time|date:"g:i A, D d M Y" }}</p>
+                    <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+                </div>
+                <p><strong>User:</strong> {{ order.user.username }}</p>
+                <p><strong>Time:</strong> {{ order.order_time|date:"g:i A, D d M Y" }}</p>
+                <p><strong>Total:</strong> ₹{{ order.total_amount }}</p>
+                
+                <h4>Items:</h4>
+                <ul class="order-panel-items">
+                    {% for item in order.orderitem_set.all %}
+                    <li>
+                        {{ item.menu_item.name }} (x{{ item.quantity }})
+                        {% if item.selected_options %} <small><em>({{ item.selected_options }})</em></small>{% endif %}
+                        {% if item.special_request %} <small><em>[Req: {{ item.special_request }}]</em></small>{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="order-panel-actions">
+                   {% if order.status == 'Preparing' and not order.cooking_start_time %}
+                    <a href="{% url 'update_order_status' order.id 'Cooking' %}" class="btn-action btn-orange">Start Cooking</a>
+                    {% endif %}
+
+                    {% if order.status == 'Cooking' %}
+                    <a href="{% url 'update_order_status' order.id 'Ready' %}" class="btn-action btn-purple">Ready for Delivery</a>
+                    {% endif %}
+
+                    {% if order.status == 'Ready' %}
+                    <a href="{% url 'update_order_status' order.id 'Out for delivery' %}" class="btn-action btn-blue">Mark as Out for Delivery</a>
+                    {% endif %}
+
+                    {% if order.status == 'Out for delivery' %}
+                    <a href="{% url 'update_order_status' order.id 'Delivered' %}" class="btn-action btn-green">Mark as Delivered</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No active orders.</p>
+    {% endif %}
+</div>
+{% endblock %}

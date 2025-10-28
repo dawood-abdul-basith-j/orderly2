@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h2>User Settings</h2>
+    <form method="POST">
+        {% csrf_token %}
+
+        {# Manually render fields for consistent styling #}
+        {{ form.phone.label_tag }}
+        {{ form.phone }}
+        {{ form.phone.errors }}
+        {% if form.phone.help_text %}<small>{{ form.phone.help_text|safe }}</small>{% endif %}
+
+        {{ form.address.label_tag }}
+        {{ form.address }}
+        {{ form.address.errors }}
+        {% if form.address.help_text %}<small>{{ form.address.help_text|safe }}</small>{% endif %}
+
+        {{ form.dietary_preference.label_tag }}
+        {{ form.dietary_preference }}
+        {{ form.dietary_preference.errors }}
+        {% if form.dietary_preference.help_text %}<small>{{ form.dietary_preference.help_text|safe }}</small>{% endif %}
+
+        <button type="submit" class="checkout-btn">Save Settings</button>
+    </form>
+    <br>
+    <p style="text-align: center;"><a href="{% url 'profile' %}">Back to Profile</a></p>
+</div>
+{% endblock %}

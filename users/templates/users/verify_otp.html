@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container">
+    <h2>Verify OTP</h2>
+    <p>An OTP has been sent to {{ email }}. Please enter it below. It expires in 10 minutes.</p>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_otp">Enter OTP:</label>
+        <input type="text" name="otp" required id="id_otp" maxlength="6" pattern="\d{6}" title="Enter the 6-digit OTP">
+        <button type="submit" class="checkout-btn">Verify OTP</button>
+    </form>
+    <p style="text-align: center; margin-top: 1rem;"><a href="{% url 'request_otp' %}">Resend OTP?</a></p>
+</div>
+{% endblock %}

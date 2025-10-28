@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Sign Up</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        {# Display non-field errors (e.g., "Username already exists") #}
+        {% if form.non_field_errors %}
+            <ul class="errorlist nonfield">
+            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+
+        {# --- Username --- #}
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.username.errors }}
+        {% if form.username.help_text %}
+            <small>{{ form.username.help_text|safe }}</small>
+        {% endif %}
+
+        {# --- Email --- #}
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {{ form.email.errors }}
+        {% if form.email.help_text %}
+            <small>{{ form.email.help_text|safe }}</small>
+        {% endif %}
+
+        {# --- Mobile Number --- #}
+        {{ form.mobile_number.label_tag }}
+        {{ form.mobile_number }}
+        {{ form.mobile_number.errors }}
+        {% if form.mobile_number.help_text %}
+            <small>{{ form.mobile_number.help_text|safe }}</small>
+        {% endif %}
+
+        {# --- First Name (This was missing from your template) --- #}
+        {{ form.first_name.label_tag }}
+        {{ form.first_name }}
+        {{ form.first_name.errors }}
+
+        {# --- Last Name (This was missing from your template) --- #}
+        {{ form.last_name.label_tag }}
+        {{ form.last_name }}
+        {{ form.last_name.errors }}
+
+        {# --- Password 1 (Password) --- #}
+        {{ form.password1.label_tag }}
+        <div class="password-wrapper">
+            {{ form.password1 }}
+            <i class="password-toggle-icon fas fa-eye"></i>
+        </div>
+        {{ form.password1.errors }}
+        {% if form.password1.help_text %}
+            <small>{{ form.password1.help_text|safe }}</small>
+        {% endif %}
+
+        {# --- Password 2 (Password Confirmation - This was missing) --- #}
+        {{ form.password2.label_tag }}
+        <div class="password-wrapper">
+            {{ form.password2 }}
+            <i class="password-toggle-icon fas fa-eye"></i>
+        </div>
+        {{ form.password2.errors }}
+        {% if form.password2.help_text %}
+            <small>{{ form.password2.help_text|safe }}</small>
+        {% endif %}
+
+        <button type="submit">Sign Up</button>
+    </form>
+</div>
+
+{# --- JavaScript Function --- #}
+<script>
+// This function definition is unchanged
+function togglePasswordVisibility(icon) {
+    const passwordInput = icon.previousElementSibling;
+    if (passwordInput && (passwordInput.type === "password" || passwordInput.type === "text")) {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Select ALL password toggle icons on the page
+    const toggleIcons = document.querySelectorAll(".password-toggle-icon");
+    
+    // Add a click event listener to EACH icon
+    toggleIcons.forEach(icon => {
+        icon.addEventListener("click", function() {
+            // 'this' refers to the specific icon that was clicked
+            togglePasswordVisibility(this);
+        });
+    });
+});
+</script>
+{% endblock %}

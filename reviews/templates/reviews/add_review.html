@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Leave a Review for Order #{{ order.id }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="rating-group">
+            <label>Your Rating (1-5):</label>
+            <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="5 stars">★</label>
+                <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">★</label>
+                <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">★</label>
+                <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">★</label>
+                <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">★</label>
+            </div>
+        </div>
+        
+        <label for="comment">Comment (Optional):</label>
+        {# --- Add id="comment" here --- #}
+        <textarea name="comment" id="comment" class="special-request-box" placeholder="Tell us what you thought..."></textarea>
+        
+        <button type="submit" class="checkout-btn">Submit Review</button>
+    </form>
+</div>
+{% endblock %}

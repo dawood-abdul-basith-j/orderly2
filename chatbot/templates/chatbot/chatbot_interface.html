@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-container chatbot-container">
+    <h2>AI Assistant</h2>
+    <div id="chatbox" class="chatbox">
+        <div class="message bot-message">Hello! I'm Orderly's AI assistant. How can I help? (e.g., show menu, add spring rolls, what are popular items?)</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Type your message..." class="chat-input" aria-label="Chat message input">
+        <button id="sendButton" class="chat-send-btn" aria-label="Send message">Send</button>
+    </div>
+</div>
+
+<script>
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    
+    // Get URL and CSRF token safely from Django template tags
+    const chatbotApiUrl = "{% url 'chatbot:chat_api' %}"; // Use the namespaced URL
+    const csrfToken = "{{ csrf_token }}"; // Get CSRF token
+
+    function addMessage(text, type = 'bot', isTyping = false) {
+        // Remove previous typing indicator if adding a real message
+        if (!isTyping) {
+            const typingIndicator = chatbox.querySelector('.typing');
+            if(typingIndicator) typingIndicator.remove();
+        }
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        if (type === 'user') {
+            messageDiv.classList.add('user-message');
+        } else {
+            messageDiv.classList.add('bot-message');
+            if (isTyping) {
+                messageDiv.classList.add('typing'); // Add typing class
+            }
+        }
+        messageDiv.textContent = text;
+        chatbox.appendChild(messageDiv);
+        chatbox.scrollTop = chatbox.scrollHeight; // Auto-scroll
+    }
+
+    async function sendMessage() {
+        const messageText = userInput.value.trim();
+        if (!messageText) return;
+
+        addMessage(messageText, 'user');
+        userInput.value = '';
+        userInput.disabled = true;
+        sendButton.disabled = true;
+        addMessage('Thinking...', 'bot', true); // Typing indicator
+
+        try {
+            const response = await fetch(chatbotApiUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json', 
+                    'X-CSRFToken': csrfToken // Include CSRF token
+                },
+                body: JSON.stringify({ message: messageText })
+            });
+
+            const data = await response.json(); // Always try to parse JSON
+
+            // Remove typing indicator only after getting response
+            const typingIndicator = chatbox.querySelector('.typing');
+            if(typingIndicator) typingIndicator.remove();
+
+            if (!response.ok) {
+                addMessage(`Error: ${data.reply || data.error || response.statusText}`, 'bot');
+            } else {
+                addMessage(data.reply, 'bot'); // Display bot's text response
+            }
+
+        } catch (error) {
+            const typingIndicator = chatbox.querySelector('.typing'); // Remove typing indicator on error too
+            if(typingIndicator) typingIndicator.remove();
+            console.error("Chatbot fetch error:", error);
+            addMessage('Sorry, connection error.', 'bot');
+        } finally {
+             userInput.disabled = false;
+             sendButton.disabled = false;
+             userInput.focus();
+        }
+    }
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') { 
+            sendMessage(); 
+            e.preventDefault(); // Prevent default form submission
+        } 
+    });
+
+</script>
+{% endblock %}

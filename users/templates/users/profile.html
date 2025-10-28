@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container" style="max-width: 950px;"> {# Make container wider #}
+    <h2>My Profile</h2>
+    <div class="profile-layout">
+        <div class="profile-details">
+            <h3>Account Details</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            
+            {# Display profile fields #}
+            <h3>Contact & Preferences</h3>
+            <p><strong>Phone:</strong> {{ user.profile.phone|default:'Not set' }}</p>
+            <p><strong>Default Address:</strong> {{ user.profile.address|default:'Not set' }}</p>
+            <p><strong>Dietary Preferences:</strong> {{ user.profile.dietary_preference|default:'Not set' }}</p>
+            <br>
+            <a href="{% url 'settings' %}" class="btn-action">Edit Settings</a> {# Use btn-action for consistency #}
+        </div>
+
+        <div class="profile-orders">
+            <h3>Order History</h3>
+            {% if user_orders %}
+                <div class="order-history-list">
+                    {% for order in user_orders %}
+                    <div class="order-history-card">
+                        <div class="order-history-header">
+                            <h4>Order #{{ order.id }}</h4>
+                            <span><strong>Status:</strong> {{ order.status }}</span>
+                        </div>
+                        <p><strong>Date:</strong> {{ order.order_time|date:"d M Y, g:i A" }}</p>
+                        <p><strong>Total:</strong> ₹{{ order.total_amount|floatformat:2 }}</p>
+                        <p><strong>Delivered To:</strong> {{ order.delivery_address|linebreaksbr }}</p>
+                        
+                        {# List items in the order #}
+                        <ul>
+                            {% for item in order.orderitem_set.all %}
+                                <li>{{ item.quantity }} x {{ item.menu_item.name }}
+                                 {% if item.selected_options %} <br><small><em>({{ item.selected_options }})</em></small>{% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        
+                        {# Link to the status/review page #}
+                        <a href="{% url 'order_status' order.id %}" class="btn-action btn-blue" style="margin-top: 1rem;">View Details</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have no past orders.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}g

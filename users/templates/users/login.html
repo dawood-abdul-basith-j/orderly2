@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %} {# It's good practice to load static if you're using Font Awesome icons #}
+
+{% block content %}
+<div class="form-container">
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        {# --- Username Field (Rectified) --- #}
+        {# This now uses the label from your forms.py file. #}
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.username.errors }}
+
+        {# --- Password Field --- #}
+        {{ form.password.label_tag }}
+        <div class="password-wrapper">
+            {{ form.password }}
+            {# Removed inline onclick="" handler #}
+            <i class="password-toggle-icon fas fa-eye"></i>
+        </div>
+        {{ form.password.errors }}
+
+        {# Display non-field errors #}
+        {% if form.non_field_errors %}
+            <ul class="errorlist nonfield">
+            {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% elif form.errors and not form.password.errors and not form.username.errors %}
+             <p class="errorlist">Please correct the errors.</p>
+        {% endif %}
+
+        <button type="submit">Login</button>
+    </form>
+    <p style="text-align: center; margin-top: 1rem;">
+        <a href="{% url 'request_otp' %}">Forgot Password?</a>
+    </p>
+</div>
+
+{# --- JavaScript Function (Rectified) --- #}
+<script>
+// This function definition is unchanged
+function togglePasswordVisibility(icon) {
+    // The input is the icon's direct sibling
+    const passwordInput = icon.previousElementSibling;
+    if (passwordInput && (passwordInput.type === "password" || passwordInput.type === "text")) {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    } else {
+        console.error("Could not find password input element relative to icon.");
+    }
+}
+
+// Add the event listener after the page loads
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleIcon = document.querySelector(".password-toggle-icon");
+    
+    if (toggleIcon) {
+        toggleIcon.addEventListener("click", function() {
+            // 'this' refers to the icon element that was clicked
+            togglePasswordVisibility(this);
+        });
+    }
+});
+</script>
+{% endblock %}

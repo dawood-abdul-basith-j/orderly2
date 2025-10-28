@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="panel-container">
+    <h2>Analytics Dashboard</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Total Sales</h4>
+            <p>₹{{ total_sales|floatformat:2 }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Total Orders</h4>
+            <p>{{ total_orders }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>Top Selling Item</h4>
+            <p>{{ top_selling_item }}</p>
+        </div>
+        
+        <div class="stat-card">
+            <h4>Average Rating</h4>
+            <p>{{ avg_rating|floatformat:1 }} ★</p>
+        </div>
+    </div>
+    
+    <div class="recent-orders-list">
+        <h3>Recent Orders</h3>
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Time</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.order_time|date:"g:i A, d M Y" }}</td>
+                    <td>₹{{ order.total_amount }}</td>
+                    <td>{{ order.status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

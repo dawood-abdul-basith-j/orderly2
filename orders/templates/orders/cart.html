@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Shopping Cart {% if request.session.shared_order_code %}(Group Order: {{ request.session.shared_order_code }}){% endif %}</h2> {# Indicate if shared #}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if share_link %}
+         <div class="share-info success"> {# Added class for styling #}
+            <p>This cart is being shared! Others can join using this link:</p>
+            <input type="text" value="{{ share_link }}" readonly class="share-link-input">
+            <p>Or tell them the code: <strong>{{ cart.share_code }}</strong></p>
+            {# Optional: Add leave button here if desired #}
+            {# <a href="{% url 'leave_order' %}" class="btn-action remove-item-btn" style="background-color: #555;">Leave Group Order</a> #}
+        </div>
+    {% elif cart and cart_items and user == cart.user %} {# Only owner can start sharing #}
+        <a href="{% url 'start_sharing_cart' %}" class="btn-action btn-purple" style="margin-bottom: 1rem;">Start Group Order</a>
+    {% endif %}
+
+
+    {% if cart and cart_items %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th> {# Header for remove button column #}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        {{ item.menu_item.name }}
+                        {% if item.selected_options %} <br><small><em>({{ item.selected_options }})</em></small>{% endif %}
+                        {% if item.special_request %} <br><small><em>Req: {{ item.special_request }}</em></small>{% endif %}
+                    </td>
+                    <td>₹{{ item.menu_item.price|floatformat:2 }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.subtotal|floatformat:2 }}</td>
+                    {# --- REMOVE BUTTON CELL --- #}
+                    <td>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="btn-action remove-item-btn" title="Remove Item">
+                            Remove {# Changed from &times; #}
+                        </a>
+                    </td>
+                    {# --- END REMOVE BUTTON CELL --- #}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="cart-summary">
+            <h3>Total: ₹{{ cart.total_amount|floatformat:2 }}</h3>
+            {# Checkout logic #}
+            {% if user == cart.user %}
+            <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+            {% elif request.session.shared_order_id %} {# If user is in shared cart but not owner #}
+            <p><em>Waiting for {{ cart.user.username }} to checkout.</em></p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

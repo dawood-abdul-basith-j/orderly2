@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container" style="max-width: 700px;">
+    <h2>{{ item.name }}</h2>
+    <div class="detail-layout">
+        {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="Photo of {{ item.name }}" class="detail-img">
+        {% endif %}
+
+        <div class="detail-info">
+            <p class="price">Base Price: ₹{{ item.price }}</p>
+            
+            <form action="{% url 'add_to_cart' item.id %}" method="POST">
+                {% csrf_token %}
+                
+                {% for group in option_groups %}
+                <fieldset class="option-group">
+                    <legend>Select {{ group.name }}:</legend>
+                    {% for option in group.options.all %}
+                    <div class="option-item">
+                        <input type="radio" name="option_group_{{ group.id }}" id="opt_{{ option.id }}" value="{{ option.id }}" required>
+                        <label for="opt_{{ option.id }}">
+                            {{ option.name }} 
+                            {% if option.price > 0 %}(+₹{{ option.price }}){% endif %}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </fieldset>
+                {% endfor %}
+
+                <fieldset class="option-group">
+                    <legend>Special Requests:</legend>
+                    <textarea name="special_request" class="special-request-box" placeholder="e.g., No onions, extra spicy..."></textarea>
+                </fieldset>
+                
+                <fieldset class="option-group">
+                    <legend>Quantity:</legend>
+                    <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                </fieldset>
+
+                <button type="submit" class="checkout-btn">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

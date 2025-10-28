@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Complete Your Payment</h2>
+
+    <div class="order-summary" style="background-color: transparent; border: none; padding: 0;"> {# Reuse some styling #}
+        <h3>Order Summary</h3>
+        <p>Order ID: #{{ order.id }}</p>
+        <p>Total Amount: <strong>₹{{ order.total_amount|floatformat:2 }}</strong></p>
+        {# Add more details if needed #}
+    </div>
+
+    {# In a real integration, this area would contain the Stripe/Razorpay form elements #}
+    <div id="payment-element" style="margin: 2rem 0; padding: 1rem; border: 1px solid var(--border-stronger); border-radius: 5px; background-color: rgba(16, 16, 16, 0.8);">
+        <p style="text-align: center; color: #ccc;"><i>(Payment gateway elements would appear here)</i></p>
+    </div>
+
+
+    {# --- DUMMY FORM TO SIMULATE SUCCESS --- #}
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="checkout-btn" id="submit-button">
+            Simulate Pay ₹{{ order.total_amount|floatformat:2 }} Now
+        </button>
+    </form>
+     {# --- END DUMMY FORM --- #}
+
+    <div id="payment-message" class="hidden"></div> {# For real integration messages #}
+
+</div>
+
+{# Add JavaScript here for real integration with Stripe.js/Razorpay.js #}
+{# <script src="https://js.stripe.com/v3/"></script> #}
+{# <script> ... Stripe setup ... </script> #}
+
+{% endblock %}

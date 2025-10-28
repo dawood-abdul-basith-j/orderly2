@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Your Shopping Cart</h2>
+
+    {% if share_link %}
+        <div class="share-info success">
+            <p>This cart is being shared! Others can join using this link:</p>
+            <input type="text" value="{{ share_link }}" readonly class="share-link-input">
+            <p>Or tell them the code: <strong>{{ cart.share_code }}</strong></p>
+            </div>
+    {% elif cart and cart_items %}
+        <a href="{% url 'start_sharing_cart' %}" class="btn-action btn-purple" style="margin-bottom: 1rem;">Start Group Order</a>
+    {% endif %}
+    {% if cart and cart_items %}
+        <table class="cart-table">
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        {{ item.menu_item.name }}
+                        {% if item.selected_options %} <br><small><em>({{ item.selected_options }})</em></small>{% endif %}
+                        {% if item.special_request %} <br><small><em>Req: {{ item.special_request }}</em></small>{% endif %}
+                    </td>
+                    <td>₹{{ item.menu_item.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.subtotal }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="cart-summary">
+            <h3>Total: ₹{{ cart.total_amount }}</h3>
+            {% if user == cart.user %}
+            <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+            {% else %}
+            <p><em>Only the cart owner ({{ cart.user.username }}) can proceed to checkout.</em></p>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

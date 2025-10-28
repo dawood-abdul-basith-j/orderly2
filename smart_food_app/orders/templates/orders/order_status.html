@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Order Confirmed!</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <p class="messages {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <p>Thank you for your order, {{ user.username }}.</p>
+    <p>Your order (ID: #{{ order.id }}) is <strong>{{ order.status }}</strong>.</p>
+    <p>Your total amount is ₹{{ order.total_amount }}.</p>
+
+    {% if order.estimated_delivery_time %}
+    <p>Estimated Delivery By: <strong>{{ order.estimated_delivery_time|date:"g:i A" }}</strong></p>
+    {% endif %}
+
+    {% if order.status == 'Delivered' and not order.review %}
+    <a href="{% url 'add_review' order.id %}" class="checkout-btn">
+        Leave a Review
+    </a>
+    {% endif %}
+    
+    <a href="{% url 'menu_home' %}" class="checkout-btn" style="background-color: #5a3e8d; margin-top: 1rem;">
+        Back to Menu
+    </a>
+</div>
+{% endblock %}

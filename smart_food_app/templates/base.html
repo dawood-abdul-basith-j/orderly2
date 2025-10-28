@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Food Ordering</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'menu_home' %}" class="brand">SmartFood</a>
+            <div class="nav-links"> {# <<< The links go inside this div #}
+
+                {% if request.session.shared_order_id %}
+                    <span class="shared-order-indicator">
+                        🛒 Group Order: {{ request.session.shared_order_code }}
+                        <a href="{% url 'leave_order' %}" title="Leave Group Order">(Leave)</a>
+                    </span>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}!</span>
+
+                    {% if user.is_staff %}
+                        <a href="{% url 'order_employee_panel' %}">Order Panel</a>
+                        <a href="{% url 'analytics_dashboard' %}">Analytics</a>
+                    {% endif %}
+
+                    {# --- Start of replaced links --- #}
+                    <a href="{% url 'view_cart' %}" aria-label="View your shopping cart">Cart</a>
+                    <a href="{% url 'profile' %}" aria-label="View your user profile">Profile</a>
+                    <a href="{% url 'logout' %}" aria-label="Log out of your account">Logout</a>
+                    {# --- End of replaced links --- #}
+
+                {% else %}
+                    {# --- Start of replaced links --- #}
+                    <a href="{% url 'login' %}" aria-label="Log in to your account">Login</a>
+                    <a href="{% url 'signup' %}" aria-label="Sign up for a new account">Sign Up</a>
+                    {# --- End of replaced links --- #}
+                {% endif %}
+
+            </div> {# <<< End of nav-links div #}
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

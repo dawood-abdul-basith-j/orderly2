@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Checkout</h2>
+    <div class="checkout-layout">
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <table class="cart-table">
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.menu_item.name }} (x{{ item.quantity }})</td>
+                        <td>₹{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="total-row">
+                        <td><strong>Total Amount</strong></td>
+                        <td><strong>₹{{ cart.total_amount }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="payment-selection">
+            <h3>Select Payment Method</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="payment-option">
+                    <input type="radio" id="cash" name="payment_method" value="Cash" checked>
+                    <label for="cash">Cash on Delivery</label>
+                </div>
+                <button typeS="submit" class="checkout-btn">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

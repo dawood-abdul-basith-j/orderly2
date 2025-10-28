@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orderly - Smart Food Ordering</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="{% url 'menu_home' %}" class="brand">Orderly</a>
+
+            <div class="nav-search-container">
+                <form method="GET" action="{% url 'menu_home' %}">
+                    
+                    {# --- Corrected placeholder text --- #}
+                    <input type="text" name="q" placeholder="Search Orderly..." value="{{ search_query|default:'' }}" class="nav-search-input" aria-label="Search Orderly">
+                </form>
+            </div>
+            <div class="nav-links"> {# --- Main User Links --- #}
+                {% if request.session.shared_order_id %}
+                    <span class="shared-order-indicator">
+                        🛒 Group Order: {{ request.session.shared_order_code }}
+                        <a href="{% url 'leave_order' %}" title="Leave Group Order">(Leave)</a>
+                    </span>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <span>Hi, {{ user.username }}!</span>
+
+                    <a href="{% url 'view_cart' %}" aria-label="View your shopping cart">Cart</a>
+                    <a href="{% url 'profile' %}" aria-label="View your user profile">Profile</a>
+                    
+                    {# --- Uncommented AI Assistant Link --- #}
+                    <a href="{% url 'chatbot:chatbot_page' %}">AI Assistant</a>
+                    
+                    <a href="{% url 'logout' %}" aria-label="Log out of your account">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" aria-label="Log in to your account">Login</a>
+                    <a href="{% url 'signup' %}" aria-label="Sign up for a new account">Sign Up</a>
+                {% endif %}
+            </div> {# --- End Main User Links --- #}
+
+            {# --- Employee Section --- #}
+            {% if user.is_authenticated and user.is_staff %} {# Check authentication AND staff status #}
+            <div class="employee-nav">
+                <span class="employee-nav-title">Staff Menu:</span>
+                <a href="{% url 'order_employee_panel' %}">Order Panel</a>
+                <a href="{% url 'analytics_dashboard' %}">Analytics</a>
+            </div>
+            {% endif %}
+            {# --- End Employee Section --- #}
+
+        </div>
+    </nav>
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

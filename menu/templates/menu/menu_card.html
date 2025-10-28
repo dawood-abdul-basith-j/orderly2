@@ -1,0 +1,16 @@
+<div class="menu-card">
+    {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="Photo of {{ item.name }}">
+    {% else %}
+        <img src="https://via.placeholder.com/300x200.png?text=No+Image" alt="Placeholder image for {{ item.name }}">
+    {% endif %}
+    <div class="card-body">
+        <h3>{{ item.name }}</h3>
+        <p class="price">₹{{ item.price }}</p>
+        
+        <a href="{% url 'menu_detail' item.id %}" class="btn-action btn-green" style="width: 100%; box-sizing: border-box;">
+            Customize
+        </a>
+        
+    </div>
+</div>
