@@ -7,11 +7,12 @@ from django.shortcuts import render # Add render
 from django.contrib.auth.decorators import login_required # Add login_required
 
 # --- Imports for Chatbot ---
+import os
+import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 import google.generativeai as genai
-import json
 # --- End Chatbot Imports ---
 
 # --- Recommendation Functions (Keep these) ---
@@ -98,10 +99,11 @@ def get_recommendations(user, tag_filter=None):
 # --- Chatbot Configuration and Views ---
 
 # Configure the Gemini API
-if settings.GEMINI_API_KEY:
+if getattr(settings, 'GEMINI_API_KEY', None):
     try:
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-pro') # Or the model you want to use
+        model_name = getattr(settings, 'GEMINI_MODEL', os.getenv('GEMINI_MODEL', 'models/gemini-3.8-flash'))
+        model = genai.GenerativeModel(model_name)
         print("Gemini API Configured Successfully.")
     except Exception as e:
         print(f"Error configuring Gemini API: {e}")

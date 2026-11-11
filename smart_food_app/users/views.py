@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from django.contrib import messages
+from orders.models import Order
 from .forms import SignUpForm, ProfileUpdateForm
 from .models import Profile, PasswordResetOTP
 from django.contrib.auth.decorators import login_required

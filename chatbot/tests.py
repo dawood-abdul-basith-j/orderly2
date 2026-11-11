@@ -6,7 +6,7 @@ from .bot_logic import OrderlyChatbot
 class ChatbotParserTests(unittest.TestCase):
 	def setUp(self):
 		# Initialize without API key so it uses the fallback parser
-		self.bot = OrderlyChatbot(api_key=None)
+		self.bot = OrderlyChatbot(api_key="")
 
 	def test_greeting(self):
 		res = self.bot.handle_message("hi", None)

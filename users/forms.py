@@ -30,28 +30,35 @@ class SignUpForm(UserCreationForm):
         """
         Override save to handle the extra fields.
         """
-        # Save the User instance (this will handle username, password,
-        # email, first_name, last_name because they are in Meta.fields)
         user = super().save(commit=False)
+        user.email = self.cleaned_data.get('email')
+        user.first_name = self.cleaned_data.get('first_name', '')
+        user.last_name = self.cleaned_data.get('last_name', '')
+        mobile = self.cleaned_data.get('mobile_number')
         
+        def save_profile():
+            try:
+                profile, created = Profile.objects.get_or_create(user=user)
+                profile.mobile_number = mobile
+                profile.phone = mobile
+                profile.save()
+            except Exception as e:
+                logger.error(f"Could not save mobile number for user {user.username}. Error: {e}")
+
         if commit:
             user.save()
-        
-        # Now, save the mobile_number to the Profile.
-        # We use get_or_create to be safe, in case a profile
-        # wasn't created by a signal.
-        try:
-            profile, created = Profile.objects.get_or_create(user=user)
-            profile.phone = self.cleaned_data['mobile_number']
-            if commit:
-                profile.save()
-        except Exception as e:
-            # Log an error if profile saving fails
-            logger.error(f"Could not save mobile number for user {user.username}. Error: {e}")
+            save_profile()
+        else:
+            old_save_m2m = getattr(self, 'save_m2m', None)
+            def save_m2m():
+                if old_save_m2m:
+                    old_save_m2m()
+                save_profile()
+            self.save_m2m = save_m2m
             
         return user
 
-# --- ProfileUpdateForm (This form was already correct) ---
+# --- ProfileUpdateForm ---
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -63,3 +70,11 @@ class ProfileUpdateForm(forms.ModelForm):
         help_texts = {
             'dietary_preference': 'Enter comma-separated tags (e.g., vegetarian, nut_allergy)',
         }
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        if profile.phone:
+            profile.mobile_number = profile.phone
+        if commit:
+            profile.save()
+        return profile

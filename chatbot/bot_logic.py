@@ -41,11 +41,14 @@ class OrderlyChatbot:
 
     def __init__(self, api_key: str | None = None):
         # prefer explicit api_key argument, else use settings/env
-        try:
-            self.api_key = api_key or getattr(settings, "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY"))
-        except Exception:
-            # settings may not be configured (e.g., during quick local tests)
-            self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+        if api_key is not None:
+            self.api_key = api_key
+        else:
+            try:
+                self.api_key = getattr(settings, "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY"))
+            except Exception:
+                # settings may not be configured (e.g., during quick local tests)
+                self.api_key = os.getenv("GEMINI_API_KEY")
 
         self.has_genai = bool(genai and self.api_key)
         if self.has_genai:
@@ -233,7 +236,7 @@ class OrderlyChatbot:
                         # settings may be unavailable in quick test contexts
                         model_name = model_name or None
                     if not model_name:
-                        model_name = "models/gemini-2.5-pro"
+                        model_name = "models/gemini-3.8-flash"
 
                     model = genai.GenerativeModel(model_name)
                     response = model.generate_content(full_prompt)
