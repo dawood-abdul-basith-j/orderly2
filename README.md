@@ -87,7 +87,7 @@
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/dawood-abdul-basith-j/orderly2.git
    cd correction
    ```
 
