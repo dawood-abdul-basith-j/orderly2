@@ -137,21 +137,35 @@
    python manage.py migrate
    ```
 
-6. **Create an admin/staff account**:
+6. **Seed sample menu items and categories** *(Recommended)*:
+   Populate the catalog with sample items (Biryani, Tikka, Spring Rolls, Naan, Gulab Jamun), prices, and options:
+   ```bash
+   python manage.py seed_data
+   ```
+
+7. **Create an admin/staff account**:
+   Required to access the Kitchen Order Panel and Analytics Dashboard:
    ```bash
    python manage.py createsuperuser
    ```
 
-7. **Run the development server**:
+8. **Run the development server**:
    ```bash
    python manage.py runserver
    ```
 
-8. Open your browser and navigate to:
-   - **Customer Portal / Menu**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-   - **Django Admin**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
-   - **Staff Order Panel**: [http://127.0.0.1:8000/orders/employee-panel/](http://127.0.0.1:8000/orders/employee-panel/)
-   - **Analytics Dashboard**: [http://127.0.0.1:8000/analytics/dashboard/](http://127.0.0.1:8000/analytics/dashboard/)
+9. **Open your browser and navigate to**:
+
+| Page / Feature | URL | Description |
+|---|---|---|
+| **Customer Home / Menu** | [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Browse food items, filter by tags, and search |
+| **Sign Up** | [http://127.0.0.1:8000/users/signup/](http://127.0.0.1:8000/users/signup/) | Create a customer account (supports mobile login) |
+| **Login** | [http://127.0.0.1:8000/users/login/](http://127.0.0.1:8000/users/login/) | Login with username **or** mobile number |
+| **AI Assistant (Chatbot)** | [http://127.0.0.1:8000/chatbot/](http://127.0.0.1:8000/chatbot/) | Natural language ordering and food queries |
+| **Cart** | [http://127.0.0.1:8000/orders/cart/](http://127.0.0.1:8000/orders/cart/) | View cart and generate Group Order share codes |
+| **Staff Order Panel** | [http://127.0.0.1:8000/orders/panel/](http://127.0.0.1:8000/orders/panel/) | Staff interface to transition order statuses |
+| **Analytics Dashboard** | [http://127.0.0.1:8000/analytics/](http://127.0.0.1:8000/analytics/) | Staff dashboard for sales, orders, and ratings |
+| **Django Admin** | [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) | Manage all database records directly |
 
 ---
 
