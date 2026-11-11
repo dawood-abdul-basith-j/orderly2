@@ -38,4 +38,4 @@ jobs:
       env:
         USE_SQLITE: "true"
       run: |
-        pytest
+        pytest -v
