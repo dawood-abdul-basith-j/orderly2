@@ -148,3 +148,4 @@ class Command(BaseCommand):
                     )
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded menu items and categories!"))
+
