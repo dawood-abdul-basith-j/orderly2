@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.x-darkgreen.svg)](https://www.djangoproject.com/)
 [![AI Assistant](https://img.shields.io/badge/Google%20Gemini-3.8%20Flash-orange.svg)](https://aistudio.google.com/)
-[![CI](https://github.com/actions/workflows/python-app.yml/badge.svg)](.github/workflows/python-app.yml)
+[![CI](https://github.com/dawood-abdul-basith-j/orderly2/actions/workflows/python-app.yml/badge.svg)](https://github.com/dawood-abdul-basith-j/orderly2/actions/workflows/python-app.yml)
 
 **Orderly** is a full-featured, AI-powered food ordering and kitchen management web application built with Django. It features an interactive food catalog, customizable item options, group ordering with shared carts, live order lifecycle tracking, staff kitchen panels, business analytics, and an integrated conversational AI chatbot powered by Google Gemini.
 
