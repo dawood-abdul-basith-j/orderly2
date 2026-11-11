@@ -28,3 +28,4 @@ class SmartFeaturesTests(TestCase):
         recommendations = get_recommendations(self.user)
         self.assertIn(self.item2, recommendations)
         self.assertNotIn(self.item1, recommendations)
+

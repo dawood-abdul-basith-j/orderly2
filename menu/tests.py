@@ -48,3 +48,4 @@ class MenuModelAndViewsTests(TestCase):
         self.assertContains(response, 'Chicken Biryani')
         self.assertContains(response, 'Portion Size')
         self.assertContains(response, 'Large')
+
